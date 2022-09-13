@@ -6,10 +6,10 @@ using UploadFile.Model;
 
 namespace UploadFile.Service
 {
-    public interface IStudentSevice
+    public interface IStudentService
     {
         public Task<List<StudentNoIdModel>> GetData();
-        public Task Create(StudentNoIdModel student);
+        public Task<StudentNoIdModel> Create(StudentNoIdModel student);
         public Task<StudentNoIdModel> GetOne(string code);
         public Task Delete(string code);
         public Task Update(string code, StudentNoIdModel data);

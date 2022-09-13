@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UploadFile.ConnectionDB;
+using UploadFile.Repositories;
+using UploadFile.Service;
 
 namespace UploadFile
 {
@@ -30,6 +32,10 @@ namespace UploadFile
             #region "Setup Connection MongoDB"
             services.Configure<MongoDBSettings>(Configuration.GetSection("MongoDB"));
             #endregion "Setup Connection MongoDB"
+
+            services.AddScoped<IStudent, Student>();
+            services.AddScoped<IStudentService, StudentService>();
+
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
