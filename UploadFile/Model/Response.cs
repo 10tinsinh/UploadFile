@@ -8,10 +8,10 @@ namespace UploadFile.Model
     public class Response
     {
         public string Success { get; set; }
-        public List<Object> Data { get; set; }
+        public Object Data { get; set; }
         public string Message { get; set; }
 
-        public Response(string success, List<Object> data ,string message)
+        public Response(string success, Object data ,string message)
         {
             this.Success = success;
             this.Data = data;

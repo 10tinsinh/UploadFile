@@ -47,5 +47,19 @@ namespace UploadFile.Controllers
                 return BadRequest();
             }
         }
+        [HttpGet("Export")]
+        public async Task<IActionResult> ExportExcel(string code)
+        {
+            try
+            {
+                
+                var result = await _student.ExportExcel(code);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
     }
 }

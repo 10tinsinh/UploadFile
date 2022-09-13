@@ -4,16 +4,19 @@ using System.Linq;
 using System.Threading.Tasks;
 using UploadFile.Model;
 using UploadFile.Repositories;
+using UploadFile.Service.ExportImport;
 
 namespace UploadFile.Service
 {
     public class StudentService : IStudentService
     {
         private readonly IStudent _student;
+        private readonly ExportStudent _export;
 
         public StudentService(IStudent student)
         {
             _student = student;
+            _export = new ExportStudent();
         }
         public async Task<StudentNoIdModel> Create(StudentNoIdModel student)
         {
@@ -56,6 +59,41 @@ namespace UploadFile.Service
 
             }
             
+        }
+
+        public async Task<Response> ExportExcel(string code)
+        {
+            try
+            {
+                var result = new List<StudentExportExcel>();
+                var dataAll = await _student.GetData();
+                if(!String.IsNullOrEmpty(code))
+                {
+                    var dataCheck = dataAll.Find(e => e.Code == code);
+                    if(dataCheck != null)
+                    {
+                        var dataTmp = new StudentNoIdModel(dataCheck);
+                        result.Add(new StudentExportExcel(dataTmp));
+                    }    
+                }
+                else
+                {
+                    var dataTmp = new List<StudentNoIdModel>(dataAll);
+                    foreach(var tmp in dataTmp)
+                    {
+                        result.Add(new StudentExportExcel(tmp));
+                    }    
+                }
+                await _export.CalExport(result);
+
+
+                return new Response("True", result, "Export successfully");
+                
+            }
+            catch
+            {
+                return new Response("False", "Export False");
+            }
         }
 
         public async Task<List<StudentNoIdModel>> GetData()
