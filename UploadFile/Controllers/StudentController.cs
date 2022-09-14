@@ -54,7 +54,12 @@ namespace UploadFile.Controllers
             {
                 
                 var result = await _student.ExportExcel(code);
-                return Ok();
+                if(result.Name != "")
+                {
+                    return File(result.Stream, result.Http, result.Name);
+                }
+                return BadRequest();
+                
             }
             catch
             {

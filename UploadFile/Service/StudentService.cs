@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using UploadFile.Model;
@@ -61,7 +62,7 @@ namespace UploadFile.Service
             
         }
 
-        public async Task<Response> ExportExcel(string code)
+        public async Task<ResponseExcel> ExportExcel(string code)
         {
             try
             {
@@ -84,15 +85,20 @@ namespace UploadFile.Service
                         result.Add(new StudentExportExcel(tmp));
                     }    
                 }
-                await _export.CalExport(result);
+                var stream = new MemoryStream();
+                 _export.CalExport(result, ref stream);
+
+                string excelname = $"ExportFile-{DateTime.Now.ToString("yyyyMMddHHmmssfff")}.xlsx";
+                string http = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
 
-                return new Response("True", result, "Export successfully");
+
+                return new ResponseExcel(excelname, stream, http);
                 
             }
             catch
             {
-                return new Response("False", "Export False");
+                return new ResponseExcel("", new MemoryStream(), "");
             }
         }
 

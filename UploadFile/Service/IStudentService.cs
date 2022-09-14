@@ -14,7 +14,7 @@ namespace UploadFile.Service
         public Task Delete(string code);
         public Task Update(string code, StudentNoIdModel data);
 
-        public Task<Response> ExportExcel(string code);
+        public Task<ResponseExcel> ExportExcel(string code);
 
     }
 }

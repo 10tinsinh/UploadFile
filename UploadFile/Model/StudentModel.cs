@@ -86,6 +86,18 @@ namespace UploadFile.Model
             this.Note = data.Note;
 
         }
+        public StudentExportExcel(StudentExportExcel data)
+        {
+            this.Code = data.Code;
+            this.Name = data.Name;
+            this.Class = data.Class;
+            this.Age = data.Age;
+            this.BirthDay = data.BirthDay;
+            this.Address = data.Address;
+            this.PhoneNumber = data.PhoneNumber;
+            this.Note = data.Note;
+
+        }
     }
 
     
