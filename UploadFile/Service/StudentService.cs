@@ -85,20 +85,45 @@ namespace UploadFile.Service
                         result.Add(new StudentExportExcel(tmp));
                     }    
                 }
+
                 var stream = new MemoryStream();
                  _export.CalExport(result, ref stream);
-
                 string excelname = $"ExportFile-{DateTime.Now.ToString("yyyyMMddHHmmssfff")}.xlsx";
-                string http = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                string ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
+                #region "Save file to project"
+                string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "File", excelname);
+                using (var fileStream = new FileStream(fullPath, FileMode.CreateNew, FileAccess.ReadWrite))
+                {
+                    stream.CopyTo(fileStream); // fileStream is not populated
+                }
+                #endregion "Save file to project"
 
-
-                return new ResponseExcel(excelname, stream, http);
+                #region "Get link file"
+                string link = fullPath;
+                var listLink = new List<string>();
+                listLink.AddRange(link.Split("\\"));
+                int count = listLink.Count();
+                string linkFile = "";
+                for(int i = 0; i<count;i++)
+                {
+                    if(i == 0)
+                    {
+                        linkFile += listLink[i];
+                    }
+                    else
+                    {
+                        linkFile += "/" + listLink[i];
+                    }
+                    
+                }
+                #endregion "Get link file"
+                return new ResponseExcel(excelname, stream, ContentType, linkFile);
                 
             }
             catch
             {
-                return new ResponseExcel("", new MemoryStream(), "");
+                return new ResponseExcel("", new MemoryStream(), "", "");
             }
         }
 

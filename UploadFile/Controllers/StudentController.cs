@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using UploadFile.Model;
@@ -56,7 +57,12 @@ namespace UploadFile.Controllers
                 var result = await _student.ExportExcel(code);
                 if(result.Name != "")
                 {
-                    return File(result.Stream, result.Http, result.Name);
+                    return Ok (new Response 
+                    {
+                        Success = result.LinkFile,
+                        Message = "Export Successfully"
+                    }
+                    );
                 }
                 return BadRequest();
                 

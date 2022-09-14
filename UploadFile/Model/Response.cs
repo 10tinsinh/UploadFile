@@ -11,6 +11,8 @@ namespace UploadFile.Model
         public Object Data { get; set; }
         public string Message { get; set; }
 
+        public Response() { }
+
         public Response(string success, Object data ,string message)
         {
             this.Success = success;

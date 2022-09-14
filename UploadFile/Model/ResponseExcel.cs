@@ -10,13 +10,16 @@ namespace UploadFile.Model
     {
         public string Name { get; set; }
         public MemoryStream Stream { get; set; }
-        public string Http { get; set; }
+        public string ContentType { get; set; }
+        public string LinkFile { get; set; }
 
-        public ResponseExcel(string name, MemoryStream stream, string http)
+
+        public ResponseExcel(string name, MemoryStream stream, string contentType, string linkFile)
         {
             this.Name = name;
             this.Stream = stream;
-            this.Http = http;
+            this.ContentType = contentType;
+            this.LinkFile = linkFile;
         }
     }      
 }

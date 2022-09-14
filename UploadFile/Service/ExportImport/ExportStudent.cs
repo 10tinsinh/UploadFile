@@ -1,4 +1,5 @@
 ﻿using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -43,6 +44,11 @@ namespace UploadFile.Service.ExportImport
                 {
                     var dataColumn = data.GetType().GetProperty(listTitleCol[i - 1]).GetValue(data);
                     worksheet.Cells[row, i].Value = dataColumn.ToString();
+                    worksheet.Cells[row, i].Style.Font.SetFromFont(new Font("Arial", 14));
+                    worksheet.Cells[row, i].Style.Border.Top.Style = ExcelBorderStyle.Thick;
+                    worksheet.Cells[row, i].Style.Border.Bottom.Style = ExcelBorderStyle.Thick;
+                    worksheet.Cells[row, i].Style.Border.Left.Style = ExcelBorderStyle.Thick;
+                    worksheet.Cells[row, i].Style.Border.Right.Style = ExcelBorderStyle.Thick;
                 }
                 row++;
             }    
@@ -60,16 +66,38 @@ namespace UploadFile.Service.ExportImport
                     //Define a worksheet
                     var worksheet = xlPackage.Workbook.Worksheets.Add("Student");
 
+                    //Set Defaut All Column
+                    worksheet.DefaultColWidth = 25;
+
+
+
                     //Style
-                    var customStyle = xlPackage.Workbook.Styles.CreateNamedStyle("CustomStyle");
-                    customStyle.Style.Font.UnderLine = true;
-                    customStyle.Style.Font.Color.SetColor(Color.Red);
+                    using (var range = worksheet.Cells["A4:H4"])
+                    {
+                        // Set PatternType
+                        range.Style.Fill.PatternType = ExcelFillStyle.DarkGray;
+                        // Set Color for Background
+                        range.Style.Fill.BackgroundColor.SetColor(Color.Green);
+                        // Canh giữa cho các text
+                        range.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                        // Set Font cho text  trong Range hiện tại
+                        range.Style.Font.SetFromFont(new Font("Arial", 14));
+                        // Set Border
+                        range.Style.Border.Bottom.Style = ExcelBorderStyle.Thick;
+                        range.Style.Border.Top.Style = ExcelBorderStyle.Thick;
+                        range.Style.Border.Left.Style = ExcelBorderStyle.Thick;
+                        range.Style.Border.Right.Style = ExcelBorderStyle.Thick;
+                        // Set màu ch Border
+                        range.Style.Border.Bottom.Color.SetColor(Color.Black);
+                    }
 
                     //First row
                     var startRow = 5;
                     var row = startRow;
 
                     worksheet.Cells["A1"].Value = "File Export Student";
+                    worksheet.Cells["A1"].Style.Font.SetFromFont(new Font("Arial", 20));
+                    worksheet.Cells["A1"].Style.Font.SetFromFont(new Font("Arial", 20));
 
                     //Get Title Colunm
                     var listTitleCol = new List<string>();
@@ -81,6 +109,7 @@ namespace UploadFile.Service.ExportImport
 
                     //Add Data Colunm
                     AddDataColunm(ref worksheet, listData, maxCol, listTitleCol);
+
 
                     xlPackage.Workbook.Properties.Title = "Student List";
                     xlPackage.Workbook.Properties.Author = "Cuongmn";
