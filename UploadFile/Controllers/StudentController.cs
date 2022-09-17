@@ -72,5 +72,24 @@ namespace UploadFile.Controllers
                 return BadRequest();
             }
         }
+        [HttpPost("Import")]
+        public async Task<IActionResult> ImportExcel(IFormFile file)
+        {
+            try
+            {
+
+                var result = await _student.ImportExcel(file);
+                return Ok(new Response
+                {
+                    Success = "",
+                    Message = result
+                }
+                );
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
     }
 }

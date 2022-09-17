@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,11 +14,13 @@ namespace UploadFile.Service
     {
         private readonly IStudent _student;
         private readonly ExportStudent _export;
+        private readonly ImportStudent _import;
 
         public StudentService(IStudent student)
         {
             _student = student;
             _export = new ExportStudent();
+            _import = new ImportStudent();
         }
         public async Task<StudentNoIdModel> Create(StudentNoIdModel student)
         {
@@ -124,6 +127,59 @@ namespace UploadFile.Service
             catch
             {
                 return new ResponseExcel("", new MemoryStream(), "", "");
+            }
+        }
+
+        public async Task<string> ImportExcel(IFormFile file)
+        {
+            try
+            {
+                string kq = "";
+                
+                string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "File", file.FileName);
+
+                if(file != null)
+                {
+                    
+
+                    #region "Read file"
+                    var list = new List<StudentExportExcel>();
+                    kq = _import.CalImport(file, ref list);
+                    if(kq != "")
+                    {
+                        return kq;
+                    }
+                    else
+                    {
+                        if(list != null && list.Count > 0)
+                        {
+                            foreach(var temp in list)
+                            {
+                                var dataTemp = new StudentNoIdModel(temp);
+                                await Create(dataTemp);
+                            }
+
+                            #region "Save File to server"
+                            using (var fileStream = new FileStream(fullPath, FileMode.CreateNew, FileAccess.ReadWrite))
+                            {
+                                await file.CopyToAsync(fileStream); // fileStream is not populated
+                            }
+                            #endregion "Save File to server"
+                        }
+                        else
+                        {
+                            return "Import False!";
+                        }    
+                        return kq;
+                    }
+                    #endregion "Read file"
+
+                }
+                return "File invalid!";
+            }
+            catch
+            {
+                return "Import False!";
             }
         }
 

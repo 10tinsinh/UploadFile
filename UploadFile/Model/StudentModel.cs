@@ -22,7 +22,10 @@ namespace UploadFile.Model
         {
             this.SetData(data);
         }
-
+        public StudentModel(StudentExportExcel data)
+        {
+            this.SetData(data);
+        }
 
     }
     public class StudentNoIdModel:IModelNotSearch
@@ -45,6 +48,10 @@ namespace UploadFile.Model
         {
             this.SetData(data);
         }
+        public StudentNoIdModel(StudentExportExcel data)
+        {
+            this.SetData(data);
+        }
         public void SetData(StudentNoIdModel data)
         {
             if(data != null)
@@ -59,6 +66,27 @@ namespace UploadFile.Model
                 this.Note = data.Note;
                 base.SetDataIModelNotSearch(data);
             }    
+        }
+        public void SetData(StudentExportExcel data)
+        {
+            if (data != null)
+            {
+                this.Code = data.Code;
+                this.Name = data.Name;
+                this.Class = data.Class;
+                this.Age = data.Age;
+                this.BirthDay = data.BirthDay;
+                this.Address = data.Address;
+                this.PhoneNumber = data.PhoneNumber;
+                this.Note = data.Note;
+
+                this.ModifyKindInput = 0;
+                this.ModifyUser = "";
+                this.ModifyDate = new DateTime();
+                this.CreateKindInput = 1;
+                this.CreateDate = DateTime.Now;
+                this.SysStatus = 1;
+            }
         }
     }
     public class StudentExportExcel

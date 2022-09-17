@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ namespace UploadFile.Service
         public Task Update(string code, StudentNoIdModel data);
 
         public Task<ResponseExcel> ExportExcel(string code);
+        public Task<string> ImportExcel(IFormFile file);
 
     }
 }
