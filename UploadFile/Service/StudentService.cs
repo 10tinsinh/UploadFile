@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Google.Cloud.Storage.V1;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -165,6 +166,23 @@ namespace UploadFile.Service
                                 await file.CopyToAsync(fileStream); // fileStream is not populated
                             }
                             #endregion "Save File to server"
+
+                            #region "Save File to Cloud"
+                            try
+                            {
+                                var gcsStorage = StorageClient.Create();
+                                string bucketName = "filecuongmn";
+                                using (var fileStream = File.OpenRead(fullPath))
+                                {
+                                    gcsStorage.UploadObject(bucketName, "demo", null, fileStream);
+                                }
+                            }
+                            catch(Exception ex)
+                            {
+
+                            }
+                            
+                            #endregion "Save File to Cloud"
                         }
                         else
                         {
@@ -177,7 +195,7 @@ namespace UploadFile.Service
                 }
                 return "File invalid!";
             }
-            catch
+            catch(Exception ex)
             {
                 return "Import False!";
             }
