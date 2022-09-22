@@ -91,5 +91,24 @@ namespace UploadFile.Controllers
                 return BadRequest();
             }
         }
+
+        [HttpDelete()]
+        public async Task<IActionResult> DeleteData(string code)
+        {
+            try
+            {
+
+                await _student.Delete(code);
+                return Ok(new Response
+                {
+                    Success = "True",
+                    Message = "Export Successfully"
+                });
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
     }
 }
