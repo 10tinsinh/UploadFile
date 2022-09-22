@@ -1,9 +1,11 @@
-﻿using Google.Cloud.Storage.V1;
+﻿using Firebase.Auth;
+using Firebase.Storage;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using UploadFile.Model;
 using UploadFile.Repositories;
@@ -16,6 +18,12 @@ namespace UploadFile.Service
         private readonly IStudent _student;
         private readonly ExportStudent _export;
         private readonly ImportStudent _import;
+
+        //Configure Firebase
+        private static string ApiKey = "AIzaSyAio29luOKJ6ub7LHl0fEdpMJVBnbcpbpw";
+        private static string Bucket = "myfile-af0af.appspot.com";
+        private static string AuthEmail = "fileuploadcuongmn@gmail.com";
+        private static string AuthPassword = "Thanht@n27121993";
 
         public StudentService(IStudent student)
         {
@@ -154,34 +162,68 @@ namespace UploadFile.Service
                     {
                         if(list != null && list.Count > 0)
                         {
-                            foreach(var temp in list)
-                            {
-                                var dataTemp = new StudentNoIdModel(temp);
-                                await Create(dataTemp);
-                            }
-
-                            #region "Save File to server"
-                            using (var fileStream = new FileStream(fullPath, FileMode.CreateNew, FileAccess.ReadWrite))
-                            {
-                                await file.CopyToAsync(fileStream); // fileStream is not populated
-                            }
-                            #endregion "Save File to server"
+                            //foreach(var temp in list)
+                            //{
+                            //    var dataTemp = new StudentNoIdModel(temp);
+                            //    await Create(dataTemp);
+                            //}
 
                             #region "Save File to Cloud"
-                            try
+                            FileStream ms = null;
+                            if (file.Length > 0)
                             {
-                                var gcsStorage = StorageClient.Create();
-                                string bucketName = "filecuongmn";
-                                using (var fileStream = File.OpenRead(fullPath))
+                                string folderName = "FileUpload";
+                                string path = Path.Combine(Directory.GetCurrentDirectory(), $"files\\{folderName}");
+
+                                var name = file.FileName.Split(".")[0];
+                                int i = 0;
+                                while(i==0)
                                 {
-                                    gcsStorage.UploadObject(bucketName, "demo", null, fileStream);
+                                    if (Directory.Exists(path))
+                                    {
+                                        while (File.Exists(Path.Combine(path, $"{name}.{file.FileName.Split(".")[1]}")))
+                                        {
+                                            name = name + "_1";
+                                        }    
+
+                                        using (ms = new FileStream(Path.Combine(path, $"{name}.{file.FileName.Split(".")[1]}"), FileMode.Create))
+                                        {
+                                            await file.CopyToAsync(ms);
+                                        }
+                                        
+                                        i++;
+                                    }
+                                    else
+                                    {
+                                        Directory.CreateDirectory(path);
+                                    }
                                 }
-                            }
-                            catch(Exception ex)
-                            {
+
+                                ms = new FileStream(Path.Combine(path, name + ".xlsx"), FileMode.Open);
+                                var auth = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
+                                var a = await auth.SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
+
+                                
+                                var cancellation = new CancellationTokenSource();
+
+                                var task = new FirebaseStorage(
+                                    Bucket,
+                                    new FirebaseStorageOptions
+                                    {
+                                        AuthTokenAsyncFactory = () => Task.FromResult(a.FirebaseToken),
+                                        ThrowOnCancel = true // when you cancel the upload, exception is thrown. By default no exception is thrown
+                                    })
+                                    .Child("fileupload")
+                                    .Child($"{name}.{file.FileName.Split(".")[1]}")
+                                    .PutAsync(ms, cancellation.Token);
+
+                                task.Progress.ProgressChanged += (s, e) => Console.WriteLine($"Progress: {e.Percentage} %");
+
 
                             }
-                            
+
+
+
                             #endregion "Save File to Cloud"
                         }
                         else
