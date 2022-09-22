@@ -162,11 +162,11 @@ namespace UploadFile.Service
                     {
                         if(list != null && list.Count > 0)
                         {
-                            //foreach(var temp in list)
-                            //{
-                            //    var dataTemp = new StudentNoIdModel(temp);
-                            //    await Create(dataTemp);
-                            //}
+                            foreach (var temp in list)
+                            {
+                                var dataTemp = new StudentNoIdModel(temp);
+                                await Create(dataTemp);
+                            }
 
                             #region "Save File to Cloud"
                             FileStream ms = null;
