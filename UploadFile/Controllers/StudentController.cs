@@ -10,7 +10,7 @@ using UploadFile.Service;
 
 namespace UploadFile.Controllers
 {
-    [Route("api/[controller]")]
+    
     [ApiController]
     public class StudentController : ControllerBase
     {
@@ -22,6 +22,7 @@ namespace UploadFile.Controllers
         }
 
         [HttpGet]
+        [Route("/api/GetData")]
         public async Task<IActionResult> GetData()
         {
             try
@@ -35,6 +36,7 @@ namespace UploadFile.Controllers
             }
         }
         [HttpPost]
+        [Route("/api/CreateData")]
         public async Task<IActionResult> CreateData(StudentNoIdModel student)
         {
             try
@@ -48,7 +50,8 @@ namespace UploadFile.Controllers
                 return BadRequest();
             }
         }
-        [HttpGet("Export")]
+        [HttpGet]
+        [Route("/api/export")]
         public async Task<IActionResult> ExportExcel(string code)
         {
             try
@@ -72,7 +75,8 @@ namespace UploadFile.Controllers
                 return BadRequest();
             }
         }
-        [HttpPost("Import")]
+        [HttpPost]
+        [Route("/api/import")]
         public async Task<IActionResult> ImportExcel(IFormFile file)
         {
             try
@@ -92,7 +96,8 @@ namespace UploadFile.Controllers
             }
         }
 
-        [HttpDelete()]
+        [HttpDelete]
+        [Route("/api/delete")]
         public async Task<IActionResult> DeleteData(string code)
         {
             try
